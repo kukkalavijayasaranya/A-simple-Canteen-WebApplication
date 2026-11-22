@@ -1,0 +1,8 @@
+{
+  "name": "smaood-smart-canteen",
+  "version": "2.0.0",
+  "description": "Smaood College Smart Canteen with Student & Admin Login/Signup, Stock Control, and Order Tracking",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

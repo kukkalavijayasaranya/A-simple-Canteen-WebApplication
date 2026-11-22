@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smaood — College Smart Canteen & Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <span class="brand-icon">🍱</span>
+        <div>
+          <span class="brand-name">Smaood</span>
+          <span class="brand-tag">College Smart Canteen</span>
+        </div>
+      </a>
+
+      <div class="search-bar" id="navSearchBar">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search samosa, coffee, dosa, fried rice..." />
+      </div>
+
+      <div class="nav-actions" id="navActions">
+        <!-- Populated dynamically based on logged-in user -->
+      </div>
+    </div>
+  </header>
+
+  <!-- AUTHENTICATION VIEW (Login / Signup for Student & Admin) -->
+  <main id="authView" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <span class="brand-icon lg">🍱</span>
+        <h2>Welcome to <span class="highlight">Smaood</span></h2>
+        <p>Sign in or create an account to order food or manage the smart kitchen.</p>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="role-switcher">
+        <button type="button" class="role-btn active" data-role="student" id="roleStudentBtn">🎓 Student Portal</button>
+        <button type="button" class="role-btn" data-role="admin" id="roleAdminBtn">👨‍🍳 Canteen Admin</button>
+      </div>
+
+      <!-- Auth Mode Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="loginTabBtn">Login</button>
+        <button type="button" class="auth-tab" id="signupTabBtn">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label id="loginIdLabel">Student Email / Roll No</label>
+          <input type="text" id="loginIdentifier" placeholder="e.g., student@college.edu or AP2511007" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required />
+        </div>
+        <button type="submit" class="btn-primary btn-block" id="loginSubmitBtn">Login as Student</button>
+
+        <div class="demo-credentials">
+          <span>Quick Demo Login:</span>
+          <button type="button" class="chip-btn" id="quickStudentDemo">Fill Student Demo</button>
+          <button type="button" class="chip-btn" id="quickAdminDemo">Fill Admin Demo</button>
+        </div>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" class="auth-form hidden">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="e.g., Muthuselvam M" required />
+        </div>
+        <div class="form-group">
+          <label id="signupIdLabel">College Roll No / Email</label>
+          <input type="text" id="signupIdentifier" placeholder="e.g., AP25110070257 or name@college.edu" required />
+        </div>
+        <div class="form-group">
+          <label>Create Password</label>
+          <input type="password" id="signupPassword" placeholder="Min 4 characters" minlength="4" required />
+        </div>
+        <div class="form-group hidden" id="adminSecretGroup">
+          <label>Admin Kitchen Passcode <small class="muted">(Default: <strong>admin123</strong>)</small></label>
+          <input type="password" id="adminPasscode" placeholder="Enter canteen staff passcode" />
+        </div>
+        <button type="submit" class="btn-primary btn-block" id="signupSubmitBtn">Register Student Account</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- STUDENT CANTEEN VIEW -->
+  <main id="studentView" class="hidden">
+    <!-- Hero Banner -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="live-chip">
+            <span class="pulse"></span> Live Campus Kitchen • Logged in as <strong id="heroUserName">Student</strong>
+          </div>
+          <h1>Order Hot Snacks & Meals Without the Break Queue.</h1>
+          <p>Browse Today's Menu, place your order in seconds, and track live kitchen status from your phone.</p>
+          <div class="hero-stats">
+            <div class="stat-box">
+              <strong id="studentActiveOrderBadge">No Active Order</strong>
+              <span>Live Order Status</span>
+            </div>
+            <div class="stat-box">
+              <strong>Fresh & Fast</strong>
+              <span>Samosa, Dosa, Coffee & More</span>
+            </div>
+            <div class="stat-box">
+              <strong>Token Pickup</strong>
+              <span>Zero Counter Waiting</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Menu Highlights Card -->
+        <div class="todays-special-card">
+          <div class="special-header">
+            <div>
+              <span class="eyebrow">📅 TODAY'S MENU HIGHLIGHTS</span>
+              <h3 id="todayDateLabel">Chef's Live Board</h3>
+            </div>
+            <span class="tag-green">Available Now</span>
+          </div>
+          <div class="special-list" id="todaysMenuList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category Filters & Menu -->
+    <section class="menu-section container">
+      <div class="controls-bar">
+        <div class="category-tabs" id="categoryTabs">
+          <button class="tab active" data-cat="all">🍽️ All Items</button>
+          <button class="tab" data-cat="todays">⭐ Today's Menu</button>
+          <button class="tab" data-cat="breakfast">🌅 Breakfast</button>
+          <button class="tab" data-cat="snacks">🥟 Snacks & Beverages</button>
+          <button class="tab" data-cat="lunch">🍛 Lunch</button>
+          <button class="tab" data-cat="dinner">🌙 Dinner</button>
+          <button class="tab" data-cat="cakes">🎂 Cakes & Bakes</button>
+        </div>
+
+        <div class="filter-controls">
+          <label class="veg-toggle">
+            <input type="checkbox" id="vegOnlyToggle" />
+            <span>Pure Veg Only</span>
+          </label>
+          <select id="sortSelect" class="select-box">
+            <option value="featured">Sort: Recommended</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="prep">Fastest Prep Time</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Menu Grid -->
+      <div class="menu-grid" id="menuGrid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ADMIN SMART KITCHEN DASHBOARD VIEW -->
+  <section id="adminView" class="container hidden">
+    <div class="kds-header">
+      <div>
+        <span class="eyebrow">ADMIN & SMART KITCHEN CONTROL</span>
+        <h2>Smaood Kitchen & Menu Manager</h2>
+        <p>Add or remove canteen dishes, update prices & stock quantities, and update live student order status.</p>
+      </div>
+      <div class="kds-actions">
+        <button class="btn-primary" id="openAddItemModalBtn">+ Add New Food Item</button>
+      </div>
+    </div>
+
+    <!-- Admin Metrics -->
+    <div class="kds-metrics">
+      <div class="metric-card">
+        <span>New / Queued Orders</span>
+        <strong id="kdsQueuedOrders">0</strong>
+      </div>
+      <div class="metric-card">
+        <span>Preparing in Kitchen</span>
+        <strong id="kdsPreparingOrders">0</strong>
+      </div>
+      <div class="metric-card">
+        <span>Ready for Pickup</span>
+        <strong id="kdsReadyOrders">0</strong>
+      </div>
+      <div class="metric-card">
+        <span>Total Canteen Sales</span>
+        <strong id="kdsRevenue">₹0</strong>
+      </div>
+    </div>
+
+    <div class="kds-layout">
+      <!-- Live Student Orders Management -->
+      <div class="kds-orders-panel">
+        <div class="panel-head">
+          <h3>Live Student Orders</h3>
+          <span class="muted-sm">Click buttons to update student order status</span>
+        </div>
+        <div class="tickets-grid" id="kdsTicketsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Menu, Pricing & Stock Management -->
+      <div class="kds-inventory-panel">
+        <div class="panel-head">
+          <h3>Menu, Price & Stock Manager</h3>
+          <span class="muted-sm">Edit stock, price, Today's Menu, or delete items</span>
+        </div>
+        <div class="inventory-list" id="kdsInventoryList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide-Over Cart Drawer (Student) -->
+  <div class="drawer-backdrop hidden" id="cartBackdrop"></div>
+  <aside class="cart-drawer hidden" id="cartDrawer">
+    <div class="drawer-header">
+      <h3>Your Canteen Tray</h3>
+      <button class="icon-btn" id="closeCartBtn">✕</button>
+    </div>
+
+    <div class="drawer-body" id="cartItemsContainer"></div>
+
+    <div class="drawer-footer">
+      <div class="pickup-options">
+        <label>Pickup Time Slot</label>
+        <select id="pickupSlot">
+          <option value="ASAP (10 mins)">ASAP (~10 mins)</option>
+          <option value="10:45 AM Morning Break">10:45 AM Morning Break</option>
+          <option value="12:45 PM Lunch Break">12:45 PM Lunch Break</option>
+          <option value="04:30 PM Evening Snacks">04:30 PM Evening Snacks</option>
+          <option value="08:00 PM Hostel Dinner">08:00 PM Hostel Dinner</option>
+        </select>
+      </div>
+
+      <div class="customer-meta">
+        <input type="text" id="cookingNoteInput" placeholder="Cooking note (e.g., Less sugar in coffee, extra chutney)" />
+      </div>
+
+      <div class="bill-summary">
+        <div class="bill-row"><span>Item Total</span><span id="billSubtotal">₹0</span></div>
+        <div class="bill-row"><span>Eco Packaging</span><span>₹5</span></div>
+        <div class="bill-row total"><span>Total Payable</span><span id="billTotal">₹0</span></div>
+      </div>
+
+      <button class="btn-primary btn-block" id="placeOrderBtn">Place Order & Track Status</button>
+    </div>
+  </aside>
+
+  <!-- Student My Orders & Live Status Modal -->
+  <div class="modal-backdrop hidden" id="ordersModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>My Orders & Live Status</h3>
+        <button class="icon-btn" id="closeOrdersModalBtn">✕</button>
+      </div>
+      <div class="modal-body" id="myOrdersList"></div>
+    </div>
+  </div>
+
+  <!-- Admin Add / Edit Food Item Modal -->
+  <div class="modal-backdrop hidden" id="addItemModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add New Item to Smaood Menu</h3>
+        <button class="icon-btn" id="closeAddItemModalBtn">✕</button>
+      </div>
+      <form id="addItemForm" class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="newItemName" placeholder="e.g., Filter Coffee" required />
+          </div>
+          <div class="form-group">
+            <label>Emoji Icon</label>
+            <input type="text" id="newItemEmoji" value="🍽️" maxlength="4" required />
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="newItemCategory" class="select-box full-w">
+              <option value="snacks">Snacks & Beverages</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="cakes">Cakes & Bakes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price (₹)</label>
+            <input type="number" id="newItemPrice" min="5" placeholder="e.g., 25" required />
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Initial Stock Qty</label>
+            <input type="number" id="newItemStock" min="0" value="30" required />
+          </div>
+          <div class="form-group">
+            <label>Prep Time (mins)</label>
+            <input type="number" id="newItemPrep" min="1" value="5" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <input type="text" id="newItemDesc" placeholder="e.g., Hot South Indian decoction coffee" required />
+        </div>
+
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="newItemVeg" checked /> Pure Veg Item</label>
+          <label><input type="checkbox" id="newItemSpecial" /> Pin to Today's Menu</label>
+        </div>
+
+        <button type="submit" class="btn-primary btn-block">Save Item to Canteen Menu</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div><strong>Smaood Smart Canteen</strong> — Campus Food Ordering & Kitchen Management</div>
+      <div class="footer-links">
+        <span>Open: 7:30 AM – 10:00 PM</span>
+        <span>•</span>
+        <span>Student & Admin Portal</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
